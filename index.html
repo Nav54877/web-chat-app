@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Chat App</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="user-profile">
+                <img src="images/default-avatar.png" alt="Profile" class="avatar">
+                <span class="username">Username</span>
+            </div>
+            <div class="chat-list">
+                <div class="chat-list-header">
+                    <h3>Chats</h3>
+                    <button id="newChatBtn">+</button>
+                </div>
+                <div class="chat-items">
+                    <!-- Chat items will be dynamically added here -->
+                </div>
+            </div>
+        </div>
+        <div class="main-chat">
+            <div class="chat-header">
+                <h2>Public Chat</h2>
+            </div>
+            <div class="messages" id="messageContainer">
+                <!-- Messages will be dynamically added here -->
+            </div>
+            <div class="message-input">
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+        <div class="users-online">
+            <h3>Online Users</h3>
+            <div class="online-users-list">
+                <!-- Online users will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
