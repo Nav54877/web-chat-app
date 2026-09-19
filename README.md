@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/banner.svg" alt="banter — real-time public chat rooms" width="800">
+  <img src="docs/ascii-hero.gif" alt="banter — real-time public chat rooms, in ASCII" width="780">
 </p>
 
 <p align="center">
@@ -7,10 +7,7 @@
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" alt="Node 18+">
   <img src="https://img.shields.io/badge/deps-express%20%2B%20socket.io-orange.svg" alt="Express + Socket.IO">
   <img src="https://img.shields.io/badge/accounts-none-purple.svg" alt="No accounts">
-</p>
-
-<p align="center">
-  <img src="docs/chat-demo.gif" alt="banter chat demo" width="760">
+  <img src="https://img.shields.io/badge/database-none-black.svg" alt="No database">
 </p>
 
 Pick a nickname, join a room, talk. **banter** is a real-time public chat
@@ -94,7 +91,7 @@ index.html       join screen + chat screen markup
 styles/main.css  dark theme, animations, responsive layout
 js/app.js        client: rendering, socket events, typing, unread badge
 test/smoke.js    two-client integration test
-docs/            banner + demo animation for this README
+docs/            ASCII hero animation for this README
 ```
 
 ## Honest limits
