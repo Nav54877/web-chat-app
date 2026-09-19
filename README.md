@@ -21,7 +21,7 @@ ever stored.
 ## Quick start
 
 ```bash
-git clone https://github.com/Nav54877/banter.git
+git clone https://github.com/navairgap/banter.git
 cd banter
 npm install
 npm start
