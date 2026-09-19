@@ -102,5 +102,5 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () =>
-  console.log(`web-chat-app listening on http://localhost:${PORT}`)
+  console.log(`banter listening on http://localhost:${PORT}`)
 );

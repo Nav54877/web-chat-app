@@ -53,7 +53,16 @@ body {
   box-shadow: 0 20px 60px rgba(0, 0, 0, .45);
 }
 
-.join-card h1 { font-size: 22px; text-align: center; }
+.join-card h1 { text-align: center; }
+.logo-mark {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  background: linear-gradient(135deg, var(--own-1), var(--own-2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
 .tagline { text-align: center; color: var(--muted); font-size: 13px; margin-bottom: 6px; }
 
 .join-card label {
@@ -220,7 +229,11 @@ body {
   gap: 12px;
 }
 
-.msg { display: flex; gap: 10px; max-width: 75%; }
+.msg { display: flex; gap: 10px; max-width: 75%; animation: pop .18s ease-out; }
+@keyframes pop {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .msg.own { align-self: flex-end; flex-direction: row-reverse; }
 
 .bubble {
@@ -248,6 +261,7 @@ body {
 .msg .meta .time { opacity: .75; margin-left: 6px; }
 
 .system {
+  animation: pop .18s ease-out;
   align-self: center;
   font-size: 12px;
   color: var(--muted);

@@ -1,7 +1,7 @@
 {
-  "name": "web-chat-app",
+  "name": "banter",
   "version": "1.0.0",
-  "description": "Real-time public chat rooms with Socket.IO - no accounts, no database, just chat",
+  "description": "banter \u2014 real-time public chat rooms with Socket.IO",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
