@@ -1,0 +1,120 @@
+/**
+ * Integration smoke test: boots the server on a scratch port, connects two
+ * socket.io clients, and exercises the core event flow end to end.
+ *
+ * Run with: npm test
+ */
+
+const { fork } = require("child_process");
+const path = require("path");
+const { io } = require("socket.io-client");
+
+const PORT = 3459;
+const URL = `http://localhost:${PORT}`;
+
+function client() {
+  return io(URL, { transports: ["websocket"], forceNew: true });
+}
+
+function once(sock, event, timeoutMs = 3000) {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(
+      () => reject(new Error(`timeout waiting for "${event}"`)),
+      timeoutMs
+    );
+    sock.once(event, (payload) => {
+      clearTimeout(t);
+      resolve(payload);
+    });
+  });
+}
+
+async function main() {
+  const server = fork(path.join(__dirname, "..", "server.js"), [], {
+    env: { ...process.env, PORT: String(PORT) },
+    silent: true,
+  });
+  server.stdout.on("data", (d) => process.stdout.write("[server] " + d));
+  server.stderr.on("data", (d) => process.stdout.write("[server:err] " + d));
+
+  let a, b;
+  try {
+    await new Promise((r) => setTimeout(r, 700)); // let it bind
+
+    a = client();
+    b = client();
+    await once(a, "connect");
+    await once(b, "connect");
+
+    // join
+    const joinedA = await new Promise((r) =>
+      a.emit("join", { name: "alice", room: "lobby" }, r)
+    );
+    if (!joinedA.ok || joinedA.name !== "alice") throw new Error("join A failed");
+    // user list reaches both — attach the listener between the joins:
+    // A's own join already broadcast a list, B's join is the one we catch
+    const usersA = once(a, "users");
+    const joinedB = await new Promise((r) =>
+      b.emit("join", { name: "alice", room: "lobby" }, r) // duplicate name on purpose
+    );
+    if (joinedB.name !== "alice (2)") {
+      throw new Error(`duplicate-name suffix broken: got "${joinedB.name}"`);
+    }
+    const list = await usersA;
+    if (!list.includes("alice") || !list.includes("alice (2)")) {
+      throw new Error("user list incomplete: " + JSON.stringify(list));
+    }
+
+    // b sees a's message
+    const gotMsg = once(b, "message");
+    a.emit("message", "hello from alice");
+    const msg = await gotMsg;
+    if (msg.user !== "alice" || msg.text !== "hello from alice") {
+      throw new Error("message payload wrong: " + JSON.stringify(msg));
+    }
+
+    // oversized message is rejected (silently dropped)
+    const shouldNotArrive = once(b, "message", 500).then(
+      () => {
+        throw new Error("500+ char message was relayed");
+      },
+      () => "ignored-as-expected"
+    );
+    a.emit("message", "x".repeat(600));
+    await shouldNotArrive;
+
+    // typing indicator
+    const gotTyping = once(b, "typing");
+    a.emit("typing", true);
+    const typing = await gotTyping;
+    if (typing.user !== "alice" || typing.isTyping !== true) {
+      throw new Error("typing payload wrong: " + JSON.stringify(typing));
+    }
+
+    // room creation
+    const newRoom = await new Promise((r) => a.emit("new room", "Test Room", r));
+    if (newRoom.room !== "test-room") {
+      throw new Error("room slug wrong: " + newRoom.room);
+    }
+
+    // disconnect cleanup: b leaves the user list
+    const afterLeave = once(a, "users");
+    b.disconnect();
+    const remaining = await afterLeave;
+    if (remaining.includes("alice (2)")) {
+      throw new Error("departed user still listed");
+    }
+
+    console.log("smoke test: all checks passed");
+    process.exitCode = 0;
+  } catch (err) {
+    console.error("smoke test FAILED:", err.message);
+    process.exitCode = 1;
+  } finally {
+    a?.close();
+    b?.close();
+    server.kill();
+  }
+}
+
+main();

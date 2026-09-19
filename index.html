@@ -1,48 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Chat App</title>
-    <link rel="stylesheet" href="styles/main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>web-chat-app</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💬</text></svg>" />
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="user-profile">
-                <img src="images/default-avatar.png" alt="Profile" class="avatar">
-                <span class="username">Username</span>
-            </div>
-            <div class="chat-list">
-                <div class="chat-list-header">
-                    <h3>Chats</h3>
-                    <button id="newChatBtn">+</button>
-                </div>
-                <div class="chat-items">
-                    <!-- Chat items will be dynamically added here -->
-                </div>
-            </div>
-        </div>
-        <div class="main-chat">
-            <div class="chat-header">
-                <h2>Public Chat</h2>
-            </div>
-            <div class="messages" id="messageContainer">
-                <!-- Messages will be dynamically added here -->
-            </div>
-            <div class="message-input">
-                <input type="text" id="messageInput" placeholder="Type a message...">
-                <button id="sendBtn">Send</button>
-            </div>
-        </div>
-        <div class="users-online">
-            <h3>Online Users</h3>
-            <div class="online-users-list">
-                <!-- Online users will be dynamically added here -->
-            </div>
-        </div>
+
+  <!-- Join screen -->
+  <div id="join-screen" class="join-screen">
+    <form id="join-form" class="join-card" autocomplete="off">
+      <h1>💬 web-chat-app</h1>
+      <p class="tagline">Public rooms. No accounts. Just talk.</p>
+      <label>
+        Nickname
+        <input id="name-input" maxlength="20" placeholder="e.g. naveen" required />
+      </label>
+      <label>
+        Room
+        <input id="room-input" list="room-options" maxlength="24" placeholder="lobby" />
+        <datalist id="room-options"></datalist>
+      </label>
+      <button type="submit">Join chat</button>
+      <p class="hint" id="join-hint"></p>
+    </form>
+  </div>
+
+  <!-- Chat screen -->
+  <div id="chat-screen" class="chat-screen hidden">
+    <header class="topbar">
+      <button id="sidebar-toggle" class="icon-btn" title="Rooms & people">☰</button>
+      <div class="room-title">
+        <h2 id="room-name">lobby</h2>
+        <span id="conn-dot" class="conn-dot" title="connecting…"></span>
+      </div>
+      <span id="online-count" class="online-count"></span>
+      <button id="leave-btn" class="ghost-btn">Leave</button>
+    </header>
+
+    <div class="body">
+      <aside id="sidebar" class="sidebar">
+        <section>
+          <h3>Rooms <button id="new-room-btn" class="mini-btn">+ new</button></h3>
+          <ul id="room-list" class="room-list"></ul>
+        </section>
+        <section>
+          <h3>Online</h3>
+          <ul id="user-list" class="user-list"></ul>
+        </section>
+      </aside>
+
+      <main class="chat">
+        <div id="messages" class="messages"></div>
+        <div id="typing-bar" class="typing-bar hidden"><span class="dots"><i></i><i></i><i></i></span> <span id="typing-text"></span></div>
+        <form id="chat-form" class="chat-form" autocomplete="off">
+          <input id="msg-input" maxlength="500" placeholder="Message…" disabled />
+          <button type="submit" id="send-btn" disabled>Send</button>
+        </form>
+      </main>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="js/app.js"></script>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
