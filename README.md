@@ -3,6 +3,10 @@
 </p>
 
 <p align="center">
+  <img src="docs/chat-demo.gif" alt="banter chat demo — rooms, bubbles, typing indicator" width="760">
+</p>
+
+<p align="center">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" alt="Node 18+">
   <img src="https://img.shields.io/badge/deps-express%20%2B%20socket.io-orange.svg" alt="Express + Socket.IO">
