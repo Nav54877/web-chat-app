@@ -7,6 +7,7 @@
 </p>
 
 <p align="center">
+  <img src="https://github.com/navairgap/banter/actions/workflows/ci.yml/badge.svg" alt="CI">
   <img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT">
   <img src="https://img.shields.io/badge/node-%3E%3D18-brightgreen.svg" alt="Node 18+">
   <img src="https://img.shields.io/badge/deps-express%20%2B%20socket.io-orange.svg" alt="Express + Socket.IO">
@@ -77,6 +78,9 @@ server-side.
 ```bash
 npm test
 ```
+
+Runs in CI on every push and pull request (Node 18 / 20 / 22) — see
+`.github/workflows/ci.yml`.
 
 Boots the server on a scratch port, connects two real socket clients, and
 verifies joining, duplicate names (including collision on a mid-session
