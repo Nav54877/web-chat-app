@@ -39,7 +39,7 @@ Requires Node.js 18+.
   with one click
 - 👀 **Live online list** per room, with join/leave notices
 - ✍️ **Typing indicators** — animated, with names
-- 🎨 **Duplicate nicknames handled** — two "alex" become `alex` and `alex (2)`
+- 🎨 **Duplicate nicknames handled** — two "alex" become `alex` and `alex (2)`, and the client re-syncs its name on every room switch
 - 📱 **Responsive** — sidebar collapses into a slide-in overlay on mobile
 - 🔔 **Unread counter** in the tab title when the window is hidden
 - 🔌 **Connection-aware** — status dot, input locks when disconnected
@@ -64,6 +64,10 @@ Browser (js/app.js) --socket.io--> server.js --broadcast--> room members
 | `rooms`   | → client  | `string[]`               | all rooms            |
 | `typing`  | → client  | `{ user, isTyping }`     | who's typing         |
 
+The `join` acknowledgement returns `{ ok, name, room }` — `name` is the
+server-resolved nickname (renamed on collision), and the client applies it
+on both the initial join and every room switch.
+
 Limits: nicknames 20 chars, messages 500 chars (over-limit is rejected,
 not truncated), rooms 24 chars. Everything is trimmed and validated
 server-side.
@@ -75,13 +79,16 @@ npm test
 ```
 
 Boots the server on a scratch port, connects two real socket clients, and
-verifies joining, duplicate names, user lists, messaging, length limits,
-typing events, room creation, and disconnect cleanup.
+verifies joining, duplicate names (including collision on a mid-session
+room switch), user lists, messaging, length limits, typing events, room
+creation, and disconnect cleanup.
 
 ## Deploying
 
 Listens on `process.env.PORT` (default 3000), no build step, no external
-services:
+services. `GET /healthz` returns `{ "ok": true }` — point your platform's
+health check at it. Only client assets are served; server files are not
+exposed.
 
 - **Render / Railway / Fly.io** — start command `npm start`
 - **VPS** — `npm install && pm2 start server.js --name banter`
@@ -90,7 +97,7 @@ services:
 ## Project layout
 
 ```
-server.js        Express + Socket.IO backend, in-memory state
+server.js        Express + Socket.IO backend, in-memory state, /healthz
 index.html       join screen + chat screen markup
 styles/main.css  dark theme, animations, responsive layout
 js/app.js        client: rendering, socket events, typing, unread badge
