@@ -183,6 +183,7 @@ function switchRoom(room) {
   if (!socket || room === myRoom) return;
   socket.emit("join", { name: myName, room }, (res) => {
     if (!res || !res.ok) return;
+    myName = res.name;   // server may rename on collision — stay in sync
     myRoom = res.room;
     roomNameEl.textContent = myRoom;
     messagesEl.replaceChildren();

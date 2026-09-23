@@ -13,7 +13,12 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-app.use(express.static(__dirname, { index: "index.html" }));
+// serve only client assets — never server.js, package.json, tests, etc.
+app.use("/styles", express.static(path.join(__dirname, "styles")));
+app.use("/js", express.static(path.join(__dirname, "js")));
+app.use("/docs", express.static(path.join(__dirname, "docs")));
+app.get("/", (_req, res) => res.sendFile(path.join(__dirname, "index.html")));
+app.get("/healthz", (_req, res) => res.json({ ok: true }));
 
 const MAX_NAME_LEN = 20;
 const MAX_MSG_LEN = 500;

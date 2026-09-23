@@ -97,6 +97,23 @@ async function main() {
       throw new Error("room slug wrong: " + newRoom.room);
     }
 
+    // room-switch rename: c joins tech as "alice", then a switches to tech
+    // and must be renamed by the server (ack carries the new name)
+    const c = client();
+    await once(c, "connect");
+    const cJoin = await new Promise((r) => c.emit("join", { name: "alice", room: "tech" }, r));
+    if (cJoin.name !== "alice") throw new Error("setup join failed: " + cJoin.name);
+    const switched = await new Promise((r) =>
+      a.emit("join", { name: "alice", room: "tech" }, r)
+    );
+    if (switched.name !== "alice (2)") {
+      throw new Error(`switch rename broken: got "${switched.name}"`);
+    }
+    c.close();
+    // move a back to lobby so the disconnect check below still holds
+    const back = await new Promise((r) => a.emit("join", { name: "alice", room: "lobby" }, r));
+    if (back.name !== "alice") throw new Error("rejoin failed: " + back.name);
+
     // disconnect cleanup: b leaves the user list
     const afterLeave = once(a, "users");
     b.disconnect();
